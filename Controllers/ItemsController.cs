@@ -29,5 +29,20 @@ namespace GA20201.Controllers
             }
         }
 
+        [HttpGet("{id}")] //url: /api/items/{id}
+        public async Task<IActionResult> GetDetail(Guid id)
+        {
+            try
+            {
+                //lay chi tiet ban ghi dua vao id
+                var item = await _db.Items.FirstOrDefaultAsync(x => x.Id == id);
+
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

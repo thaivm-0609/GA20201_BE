@@ -9,6 +9,7 @@ namespace GA20201.Models
         {
         }
         
-        public DbSet<Item> Items { get; set; }
+        // DbSet<TenModel> TenTable { get; set; }
+        public DbSet<Item> Items { get; set; } //khai bao table
     }
 }
