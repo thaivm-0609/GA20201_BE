@@ -9,10 +9,11 @@ namespace GA20201.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly AppDbContext _db;
-
+        private readonly ResponseApi response;
         public ItemsController(AppDbContext db)
         {
             _db = db;
+            response = new ResponseApi();
         }
 
         [HttpGet] //url: /api/items
@@ -21,7 +22,12 @@ namespace GA20201.Controllers
             try
             {
                 var items = await _db.Items.ToListAsync();
-                return Ok(items);
+
+                response.message = "Lấy dữ liệu thành công";
+                response.success = true;
+                response.data = items;
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -37,7 +43,11 @@ namespace GA20201.Controllers
                 //lay chi tiet ban ghi dua vao id
                 var item = await _db.Items.FirstOrDefaultAsync(x => x.Id == id);
 
-                return Ok(item);
+                response.message = "Lấy dữ liệu thành công";
+                response.success = true;
+                response.data = item;
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -77,7 +87,11 @@ namespace GA20201.Controllers
                 await _db.Items.AddAsync(item); //gui du lieu 
                 await _db.SaveChangesAsync(); //luu thay doi vao trong database
 
-                return Ok(item);
+                response.message = "Thêm mới thành công";
+                response.success = true;
+                response.data = item;
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -104,8 +118,47 @@ namespace GA20201.Controllers
                 //B3: luu du lieu vao database
                 await _db.SaveChangesAsync();
 
-                return Ok("Chinh sua thanhh cong");
+                response.message = "Chỉnh sửa thành công";
+                response.success = true;
+                response.data = oldItem;
+
+                return Ok(response);
             } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadFile([FromForm] List<IFormFile> files)
+        {
+            try
+            {
+                if (files == null || files.Count == 0) //kiem tra neu khong co file upload len
+                {
+                    return BadRequest("Ban chua chon file");
+                }
+
+                var path = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot/uploads");
+                Directory.CreateDirectory(path); //neu khong ton tai thu muc upload thi tao moi
+
+                var uploadedFiles = new List<string>();
+
+                foreach (var file in files)
+                {
+                    var filePath = Path.Combine(path, file.FileName);
+                    using FileStream fs = new FileStream(filePath, FileMode.Create);
+                    await file.CopyToAsync(fs);
+                    uploadedFiles.Add(file.FileName);
+                }
+
+                response.message = "Upload thành công";
+                response.success = true;
+                response.data = uploadedFiles;
+
+                return Ok(response);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
