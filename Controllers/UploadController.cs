@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GA20201.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] // /api/upload
     [ApiController]
     public class UploadController : ControllerBase
     {
