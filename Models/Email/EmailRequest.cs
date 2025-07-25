@@ -8,5 +8,6 @@
         public string? Subject { get; set; } //tieu de cua email
 
         public string? Body { get; set; } //noi dung email
+        public bool isHtml {  get; set; } //khai bao dinh dang email la html hay la text thuong
     }
 }
