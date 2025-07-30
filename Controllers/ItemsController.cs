@@ -1,4 +1,5 @@
 ﻿using GA20201.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ namespace GA20201.Controllers
             _db = db;
         }
 
+        [Authorize] //them xac thuc cho api lay danh sach items
         [HttpGet] //url: /api/items
         public async Task<IActionResult> GetItems()
         {

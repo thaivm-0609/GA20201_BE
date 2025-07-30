@@ -1,7 +1,10 @@
 using GA20201.Models;
 using GA20201.Models.Email;
 using GA20201.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +21,24 @@ builder.Services.AddSwaggerGen(c =>
 //khai bao dich vu email
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailService, EmailService>();
+//khai bao dich vu authentication
+builder.Services.AddAuthentication(x =>
+{   //gan lai gia tri mac dinh thanh JwtBear
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true, //kiem tra thong tin ng tao token
+        ValidateAudience = true, //kiem tra thong tin ng dung token
+        ValidateLifetime = true, //kiem tra thoi gian ton tai cua token
+        ValidateIssuerSigningKey = true, //kiem tra key
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
 
 var app = builder.Build();
 
@@ -38,7 +59,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

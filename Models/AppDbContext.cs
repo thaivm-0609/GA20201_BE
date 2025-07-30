@@ -11,5 +11,7 @@ namespace GA20201.Models
         
         // DbSet<TenModel> TenTable { get; set; }
         public DbSet<Item> Items { get; set; } //khai bao table
+
+        public DbSet<Account> Accounts { get; set; } //khai bao bang account
     }
 }
