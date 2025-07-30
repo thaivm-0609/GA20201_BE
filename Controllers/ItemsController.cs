@@ -1,6 +1,11 @@
 ﻿using GA20201.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace GA20201.Controllers
 {
@@ -15,6 +20,7 @@ namespace GA20201.Controllers
             _db = db;
         }
 
+        [Authorize]
         [HttpGet] //url: /api/items
         public async Task<IActionResult> GetItems()
         {
